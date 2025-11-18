@@ -1,0 +1,72 @@
+services:
+  # PostgreSQL Database Service
+  db:
+    image: postgres:16-alpine
+    container_name: clinica-citas-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-clinica_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-clinica_2025_secure}
+      POSTGRES_DB: ${POSTGRES_DB:-clinica_citas}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init/01-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./db/seed/02-seed-data.sql:/docker-entrypoint-initdb.d/02-seed-data.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-clinica_admin} -d ${POSTGRES_DB:-clinica_citas}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - clinica-network
+
+  # Python Application Service
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: clinica-citas-app
+    restart: unless-stopped
+    environment:
+      # Database configuration
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-clinica_citas}
+      DB_USER: ${POSTGRES_USER:-clinica_admin}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-clinica_2025_secure}
+      
+      # Application configuration
+      APP_ENV: ${APP_ENV:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      
+      # Python configuration
+      PYTHONUNBUFFERED: 1
+      PYTHONDONTWRITEBYTECODE: 1
+    ports:
+      - "${APP_PORT:-5000}:5000"
+    volumes:
+      - ./app:/app
+      - app_logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - clinica-network
+    command: python main.py
+
+# Named volumes for data persistence
+volumes:
+  postgres_data:
+    name: clinica-citas-postgres-data
+  app_logs:
+    name: clinica-citas-app-logs
+
+# Custom network for service communication
+networks:
+  clinica-network:
+    name: clinica-citas-network
+    driver: bridge

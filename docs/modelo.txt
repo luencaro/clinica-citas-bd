@@ -1,0 +1,66 @@
+USUARIO(
+    id_usuario PK,
+    nombre,
+    apellido,
+    email UNIQUE,
+    telefono UNIQUE,
+    contraseña,
+    rol CHECK (rol IN ('ADMIN', 'MEDICO', 'PACIENTE'))
+)
+
+PACIENTE(
+    id_paciente PK,
+    id_usuario FK UNIQUE REFERENCES USUARIO(id_usuario),
+    fecha_nacimiento,
+    direccion
+)
+
+ESPECIALIDAD(
+    id_especialidad PK,
+    nombre
+)
+
+MEDICO(
+    id_medico PK,
+    id_usuario FK UNIQUE REFERENCES USUARIO(id_usuario),
+    id_especialidad FK REFERENCES ESPECIALIDAD(id_especialidad),
+    registro_profesional
+)
+
+HORARIO_MEDICO(
+    id_horario PK,
+    id_medico FK REFERENCES MEDICO(id_medico),
+    dia_semana CHECK (dia_semana BETWEEN 1 AND 7),
+    hora_inicio,
+    hora_fin
+)
+
+CITA(
+    id_cita PK,
+    id_paciente FK REFERENCES PACIENTE(id_paciente),
+    id_medico FK REFERENCES MEDICO(id_medico),
+    fecha,
+    hora,
+    motivo,
+    estado CHECK (estado IN ('AGENDADA','CANCELADA','REPROGRAMADA','ATENDIDA')),
+    fecha_creacion,
+    fecha_actualizacion,
+    UNIQUE(id_medico, fecha, hora)
+)
+
+HISTORIAL_CITA(
+    id_historial PK,
+    id_cita FK REFERENCES CITA(id_cita),
+    estado_anterior,
+    estado_nuevo,
+    fecha_cambio,
+    descripcion
+)
+
+NOTIFICACION(
+    id_notificacion PK,
+    id_usuario FK REFERENCES USUARIO(id_usuario),
+    mensaje,
+    fecha_envio,
+    leida
+)

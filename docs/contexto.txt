@@ -1,0 +1,20 @@
+Proyecto Final. Desarrollo Python y/o JavaScript / Driver y RDBMS
+OBJETIVO
+    1. Afianzar los conocimientos de Diseño y modelamiento de bases de datos relacionales a través de la implementación de un sistema de información apoyado con un motor de base de datos relacional.
+    2. Utilizar BD relacionales con Docker.
+
+INSTRUCCIONES
+Para los grupos definidos elaborar una implementación completa sobre base de datos que incluye
+    1. Desarrollo de un modelo Entidad-Relación basado en el análisis de una propuesta de negocio. 
+    2. Conversión del modelo entidad-relación en modelo relacional. 
+    3. Desarrollo de un script para implementar el modelo en una base de datos relacional y desarrollo de un script que ingrese los datos básicos en cada una de las tablas del modelo requeridos. 
+    4. Desarrollo de una aplicación que implemente y facilite el ingreso de los datos en las bases de datos respetando las reglas del negocio. El desarrollo se hará en un framework de Python y/o Javascript, se debe implementar este desarrollo utilizando Docker. 
+    5. Se debe hacer una exposición del tema que incluya la tecnología tanto del motor de base de datos (RDBMS), La herramienta de desarrollo de la aplicación y el driver o conector utilizado. Así como un breve recuento de los retos durante la elaboración de la solución. Fecha: 04/12/2025, 12:30 – 15:00 LG2-51 
+
+RÚBRICA DE CALIFICACIÓN
+    • Pertinencia del Modelo E-R y Relacional presentado (15%).
+    • Pertinencia de los scripts en la Base de datos seleccionada. (10%).
+    • Utilización de vistas, procedimientos, funciones o trigger en la BD (15%).
+    • Pertinencia del software que ingresa datos y gestiona todo el modelo de datos haciendo que se cumplan las reglas de negocio. (30%).
+    • Utilización de Docker (20%). 
+    • Presentación de la experiencia. Participación de todos los integrantes del grupo. (10%).
