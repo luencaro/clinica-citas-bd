@@ -32,7 +32,8 @@ SELECT
     e.nombre AS especialidad,
     e.descripcion AS especialidad_descripcion,
     -- Timestamps
-    c.fecha_creacion
+    c.fecha_creacion,
+    c.fecha_modificacion
 FROM cita c
 INNER JOIN paciente p ON c.id_paciente = p.id_paciente
 INNER JOIN usuario up ON p.id_usuario = up.id_usuario
@@ -81,7 +82,7 @@ INNER JOIN especialidad e ON m.id_especialidad = e.id_especialidad
 LEFT JOIN horario_medico hm ON m.id_medico = hm.id_medico
 WHERE m.activo = TRUE
   AND u.activo = TRUE
-  AND e.activo = TRUE
+  AND e.activa = TRUE
 ORDER BY e.nombre, medico_nombre, hm.dia_semana, hm.hora_inicio;
 
 COMMENT ON VIEW vista_disponibilidad_medicos IS 
@@ -142,6 +143,7 @@ SELECT
     hc.fecha_cambio,
     hc.estado_anterior,
     hc.estado_nuevo,
+    hc.observaciones,
     c.fecha AS fecha_cita,
     c.hora AS hora_cita,
     up.nombre || ' ' || up.apellido AS paciente,
@@ -182,7 +184,7 @@ SELECT
 FROM especialidad e
 LEFT JOIN medico m ON e.id_especialidad = m.id_especialidad
 LEFT JOIN horario_medico hm ON m.id_medico = hm.id_medico
-WHERE e.activo = TRUE
+WHERE e.activa = TRUE
 GROUP BY e.id_especialidad, e.nombre, e.descripcion
 ORDER BY total_medicos DESC, especialidad;
 
@@ -206,7 +208,7 @@ SELECT
     EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - n.fecha_envio))/3600 AS horas_desde_envio
 FROM notificacion n
 INNER JOIN usuario u ON n.id_usuario = u.id_usuario
-WHERE n.leida = FALSE
+WHERE n.leido = FALSE
 ORDER BY n.fecha_envio DESC;
 
 COMMENT ON VIEW vista_notificaciones_pendientes IS 
