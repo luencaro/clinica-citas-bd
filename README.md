@@ -37,7 +37,7 @@ Sistema completo de gestión de citas médicas con arquitectura en capas, desarr
 
 ```
 ┌─────────────────────────────────────┐
-│         UI Layer (Django)           │  ← Próxima implementación
+│         UI Layer (Django)           │  ← Interfaz para el usuario final
 ├─────────────────────────────────────┤
 │       Business Logic Layer          │
 │  ┌─────────────────────────────┐   │
@@ -95,8 +95,6 @@ sudo docker compose up -d
 make status
 ```
 
-**Todo está listo!** Schema, seed data, triggers, procedures y vistas ya aplicados.
-
 ## 🗄️ Base de Datos
 
 ### Conexión
@@ -133,103 +131,4 @@ usuario | paciente | medico | especialidad | horario_medico | cita | historial_c
 - vista_notificaciones_pendientes
 - vista_ocupacion_diaria_medicos
 - vista_pacientes_frecuentes
-
-## 💼 Lógica de Negocio
-
-### Services Implementados
-
-#### UsuarioService
-```python
-from app.services import UsuarioService
-
-service = UsuarioService()
-
-# Crear usuario
-usuario = service.crear_usuario(
-    nombre="Juan", apellido="Pérez",
-    email="juan@email.com", telefono="555-1234",
-    contraseña="Password123", rol="PACIENTE"
-)
-
-# Autenticar
-usuario = service.autenticar("juan@email.com", "Password123")
-```
-
-#### PacienteService
-```python
-# Crear paciente completo (usuario + paciente)
-usuario, paciente = service.crear_paciente_completo(
-    nombre="María", apellido="García",
-    email="maria@email.com", telefono="555-5678",
-    contraseña="SecurePass123",
-    fecha_nacimiento=date(1990, 5, 15)
-)
-```
-
-#### MedicoService
-```python
-# Crear médico completo
-usuario, medico = service.crear_medico_completo(
-    nombre="Dr. Carlos", apellido="Rodríguez",
-    email="carlos@clinica.com",
-    id_especialidad=1,
-    registro_profesional="MED-12345"
-)
-
-# Agregar horario
-horario = service.agregar_horario(
-    id_medico=1, dia_semana=1,
-    hora_inicio=time(9,0), hora_fin=time(17,0)
-)
-```
-
-#### CitaService (El más crítico)
-```python
-# Agendar cita con todas las validaciones
-cita = service.agendar_cita(
-    id_paciente=1, id_medico=1,
-    fecha=date(2025, 12, 1), hora=time(10, 0),
-    motivo="Consulta general"
-)
-
-# Obtener disponibilidad
-horarios = service.obtener_disponibilidad_medico(1, date(2025, 12, 1))
-
-# Cancelar/Reprogramar
-service.cancelar_cita(id_cita=1)
-service.reprogramar_cita(id_cita=1, nueva_fecha=..., nueva_hora=...)
-```
-
-### Validaciones Automáticas
-
-✅ Email formato válido (regex)  
-✅ Teléfono formato válido  
-✅ Contraseña: min 8 chars, mayúscula, minúscula, número  
-✅ Fechas futuras (máx 6 meses)  
-✅ Horarios 06:00-22:00  
-✅ Citas en horas exactas/medias (10:00, 10:30)  
-✅ Verificación de disponibilidad médico  
-✅ Estados válidos de citas
-
-### Excepciones (20+)
-EmailDuplicadoError, CitaNoDisponibleError, FechaPasadaError, CredencialesInvalidasError, MedicoInactivoError, HorarioSuperposicionError, y más...
-
-## 📋 Próximos Pasos
-
-### Fase 1: UI con Django ✨
-- [ ] Configurar proyecto Django
-- [ ] Crear vistas y templates
-- [ ] Sistema de autenticación
-- [ ] Interfaces para pacientes/médicos
-- [ ] Panel de administración
-
-### Fase 2: Mejoras
-- [ ] Tests unitarios
-- [ ] API REST
-- [ ] Notificaciones email
-- [ ] Dashboard con gráficos
-
 ---
-
-**Estado**: ✅ Lógica de Negocio Completa | ⏳ UI Pendiente  
-**Última actualización**: Noviembre 2025
