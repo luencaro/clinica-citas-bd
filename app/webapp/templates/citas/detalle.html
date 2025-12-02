@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Cita #{{ cita.id_cita }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="bi bi-calendar-event"></i>
+                Cita #{{ cita.id_cita }}
+            </h1>
+        </div>
+        <div class="col-auto">
+            <a href="{% url 'citas_list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Información Principal -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Información de la Cita</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong><i class="bi bi-calendar3"></i> Fecha:</strong>
+                            <p class="mb-0">{{ cita.fecha|date:"d/m/Y" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong><i class="bi bi-clock"></i> Hora:</strong>
+                            <p class="mb-0">{{ cita.hora }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong><i class="bi bi-info-circle"></i> Estado:</strong>
+                            <p class="mb-0">
+                                {% if cita.estado == 'AGENDADA' %}
+                                <span class="badge bg-primary badge-estado">{{ cita.estado }}</span>
+                                {% elif cita.estado == 'ATENDIDA' %}
+                                <span class="badge bg-success badge-estado">{{ cita.estado }}</span>
+                                {% elif cita.estado == 'CANCELADA' %}
+                                <span class="badge bg-danger badge-estado">{{ cita.estado }}</span>
+                                {% else %}
+                                <span class="badge bg-warning badge-estado">{{ cita.estado }}</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong><i class="bi bi-file-text"></i> Motivo:</strong>
+                        <p class="mb-0">{{ cita.motivo }}</p>
+                    </div>
+
+                    {% if cita.observaciones %}
+                    <div class="mb-3">
+                        <strong><i class="bi bi-chat-left-text"></i> Observaciones:</strong>
+                        <p class="mb-0">{{ cita.observaciones }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Información del Paciente -->
+            {% if user.rol != 'PACIENTE' %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-person"></i> Paciente</h5>
+                </div>
+                <div class="card-body">
+                    <h6>{{ paciente.nombre }} {{ paciente.apellido }}</h6>
+                    <p class="mb-1"><strong>Edad:</strong> {{ paciente.edad }} años</p>
+                    {% if paciente.direccion %}
+                    <p class="mb-1"><strong>Dirección:</strong> {{ paciente.direccion }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Información del Médico -->
+            {% if user.rol != 'MEDICO' %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-person-badge"></i> Médico</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Dr/a. {{ medico.nombre }} {{ medico.apellido }}</h6>
+                    <p class="mb-1"><strong>Especialidad:</strong> {{ medico.especialidad_nombre }}</p>
+                    <p class="mb-1"><strong>Registro:</strong> {{ medico.registro_profesional }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Acciones -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Acciones</h5>
+                </div>
+                <div class="card-body">
+                    {% if cita.estado == 'AGENDADA' %}
+                    <!-- Cancelar Cita -->
+                    <button type="button" class="btn btn-danger w-100 mb-2" data-bs-toggle="modal"
+                        data-bs-target="#cancelarModal">
+                        <i class="bi bi-x-circle"></i> Cancelar Cita
+                    </button>
+
+                    <!-- Reprogramar Cita -->
+                    <button type="button" class="btn btn-warning w-100 mb-2" data-bs-toggle="modal"
+                        data-bs-target="#reprogramarModal">
+                        <i class="bi bi-calendar-event"></i> Reprogramar
+                    </button>
+
+                    <!-- Marcar como Atendida (solo médico/admin) -->
+                    {% if user.rol == 'MEDICO' or user.rol == 'ADMIN' %}
+                    <button type="button" class="btn btn-success w-100 mb-2" data-bs-toggle="modal"
+                        data-bs-target="#atenderModal">
+                        <i class="bi bi-check-circle"></i> Marcar Atendida
+                    </button>
+                    {% endif %}
+                    {% endif %}
+
+                    <hr>
+
+                    <small class="text-muted">
+                        <i class="bi bi-clock-history"></i> Creada: {{ cita.fecha_creacion|date:"d/m/Y H:i" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cancelar -->
+<div class="modal fade" id="cancelarModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'cita_cancelar' cita.id_cita %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Cancelar Cita</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de cancelar esta cita?</p>
+                    <div class="mb-3">
+                        <label for="motivo_cancelacion" class="form-label">Motivo de cancelación (opcional):</label>
+                        <textarea class="form-control" id="motivo_cancelacion" name="motivo" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-danger">Cancelar Cita</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Reprogramar -->
+<div class="modal fade" id="reprogramarModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'cita_reprogramar' cita.id_cita %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Reprogramar Cita</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nueva_fecha" class="form-label">Nueva Fecha:</label>
+                        <input type="date" class="form-control" id="nueva_fecha" name="fecha" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nueva_hora" class="form-label">Nueva Hora:</label>
+                        <input type="time" class="form-control" id="nueva_hora" name="hora" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="motivo_reprog" class="form-label">Motivo (opcional):</label>
+                        <textarea class="form-control" id="motivo_reprog" name="motivo" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-warning">Reprogramar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Atender -->
+<div class="modal fade" id="atenderModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'cita_atender' cita.id_cita %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Marcar como Atendida</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Confirmas que esta cita fue atendida?</p>
+                    <div class="mb-3">
+                        <label for="observaciones_atencion" class="form-label">Observaciones (opcional):</label>
+                        <textarea class="form-control" id="observaciones_atencion" name="observaciones"
+                            rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success">Confirmar Atención</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set min date for reprogramming
+    document.getElementById('nueva_fecha').min = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}

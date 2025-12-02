@@ -16,7 +16,7 @@ services:
       - ./db/init/01-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
       - ./db/seed/02-seed-data.sql:/docker-entrypoint-initdb.d/02-seed-data.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-clinica_admin} -d ${POSTGRES_DB:-clinica_citas}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-clinica_admin} -d ${POSTGRES_DB:-clinica_citas}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -38,11 +38,11 @@ services:
       DB_NAME: ${POSTGRES_DB:-clinica_citas}
       DB_USER: ${POSTGRES_USER:-clinica_admin}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-clinica_2025_secure}
-      
+
       # Application configuration
       APP_ENV: ${APP_ENV:-development}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
-      
+
       # Python configuration
       PYTHONUNBUFFERED: 1
       PYTHONDONTWRITEBYTECODE: 1
@@ -56,7 +56,7 @@ services:
         condition: service_healthy
     networks:
       - clinica-network
-    command: python main.py
+    command: python run_webapp.py
 
 # Named volumes for data persistence
 volumes:

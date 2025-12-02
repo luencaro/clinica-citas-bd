@@ -20,11 +20,11 @@ ON CONFLICT (nombre) DO NOTHING;
 -- ============================================================================
 
 -- Contraseña para todos los usuarios: "Clinica2025!"
--- Hash bcrypt: $2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO
+-- Hash bcrypt: $2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq
 
 INSERT INTO usuario (nombre, apellido, email, telefono, contraseña, rol) VALUES
-    ('Carlos', 'Rodríguez', 'admin@clinica.com', '+51999000001', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'ADMIN'),
-    ('Ana', 'Martínez', 'ana.martinez@clinica.com', '+51999000002', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'ADMIN')
+    ('Carlos', 'Rodríguez', 'admin@clinica.com', '+51999000001', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'ADMIN'),
+    ('Ana', 'Martínez', 'ana.martinez@clinica.com', '+51999000002', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'ADMIN')
 ON CONFLICT (email) DO NOTHING;
 
 -- ============================================================================
@@ -32,12 +32,12 @@ ON CONFLICT (email) DO NOTHING;
 -- ============================================================================
 
 INSERT INTO usuario (nombre, apellido, email, telefono, contraseña, rol) VALUES
-    ('Roberto', 'García', 'roberto.garcia@clinica.com', '+51999100001', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'MEDICO'),
-    ('María', 'López', 'maria.lopez@clinica.com', '+51999100002', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'MEDICO'),
-    ('Juan', 'Fernández', 'juan.fernandez@clinica.com', '+51999100003', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'MEDICO'),
-    ('Laura', 'Sánchez', 'laura.sanchez@clinica.com', '+51999100004', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'MEDICO'),
-    ('Pedro', 'Ramírez', 'pedro.ramirez@clinica.com', '+51999100005', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'MEDICO'),
-    ('Carmen', 'Torres', 'carmen.torres@clinica.com', '+51999100006', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'MEDICO')
+    ('Roberto', 'García', 'roberto.garcia@clinica.com', '+51999100001', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'MEDICO'),
+    ('María', 'López', 'maria.lopez@clinica.com', '+51999100002', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'MEDICO'),
+    ('Juan', 'Fernández', 'juan.fernandez@clinica.com', '+51999100003', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'MEDICO'),
+    ('Laura', 'Sánchez', 'laura.sanchez@clinica.com', '+51999100004', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'MEDICO'),
+    ('Pedro', 'Ramírez', 'pedro.ramirez@clinica.com', '+51999100005', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'MEDICO'),
+    ('Carmen', 'Torres', 'carmen.torres@clinica.com', '+51999100006', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'MEDICO')
 ON CONFLICT (email) DO NOTHING;
 
 -- ============================================================================
@@ -45,16 +45,16 @@ ON CONFLICT (email) DO NOTHING;
 -- ============================================================================
 
 INSERT INTO usuario (nombre, apellido, email, telefono, contraseña, rol) VALUES
-    ('Luis', 'Gómez', 'luis.gomez@email.com', '+51999200001', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'PACIENTE'),
-    ('Patricia', 'Díaz', 'patricia.diaz@email.com', '+51999200002', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'PACIENTE'),
-    ('Jorge', 'Morales', 'jorge.morales@email.com', '+51999200003', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'PACIENTE'),
-    ('Sofía', 'Vargas', 'sofia.vargas@email.com', '+51999200004', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'PACIENTE'),
-    ('Miguel', 'Castro', 'miguel.castro@email.com', '+51999200005', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'PACIENTE'),
-    ('Elena', 'Ruiz', 'elena.ruiz@email.com', '+51999200006', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'PACIENTE'),
-    ('Diego', 'Ortiz', 'diego.ortiz@email.com', '+51999200007', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'PACIENTE'),
-    ('Valentina', 'Mendoza', 'valentina.mendoza@email.com', '+51999200008', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'PACIENTE'),
-    ('Ricardo', 'Flores', 'ricardo.flores@email.com', '+51999200009', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'PACIENTE'),
-    ('Isabella', 'Herrera', 'isabella.herrera@email.com', '+51999200010', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIVr8WCvSO', 'PACIENTE')
+    ('Luis', 'Gómez', 'luis.gomez@email.com', '+51999200001', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'PACIENTE'),
+    ('Patricia', 'Díaz', 'patricia.diaz@email.com', '+51999200002', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'PACIENTE'),
+    ('Jorge', 'Morales', 'jorge.morales@email.com', '+51999200003', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'PACIENTE'),
+    ('Sofía', 'Vargas', 'sofia.vargas@email.com', '+51999200004', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'PACIENTE'),
+    ('Miguel', 'Castro', 'miguel.castro@email.com', '+51999200005', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'PACIENTE'),
+    ('Elena', 'Ruiz', 'elena.ruiz@email.com', '+51999200006', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'PACIENTE'),
+    ('Diego', 'Ortiz', 'diego.ortiz@email.com', '+51999200007', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'PACIENTE'),
+    ('Valentina', 'Mendoza', 'valentina.mendoza@email.com', '+51999200008', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'PACIENTE'),
+    ('Ricardo', 'Flores', 'ricardo.flores@email.com', '+51999200009', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'PACIENTE'),
+    ('Isabella', 'Herrera', 'isabella.herrera@email.com', '+51999200010', '$2b$12$Zm8FiLf96pBqGaG/9ak3fejziz9FKphMNxVUn/mEtqH1HJdYezSjq', 'PACIENTE')
 ON CONFLICT (email) DO NOTHING;
 
 -- ============================================================================
@@ -268,3 +268,4 @@ BEGIN
     RAISE NOTICE '  Contraseña: Clinica2025!';
     RAISE NOTICE '================================================';
 END $$;
+

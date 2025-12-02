@@ -1,0 +1,3 @@
+"""
+WebApp Module - Django Integration
+"""

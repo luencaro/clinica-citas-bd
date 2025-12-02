@@ -13,10 +13,10 @@ ENV PYTHONUNBUFFERED=1 \
 # Install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        postgresql-client \
-        gcc \
-        python3-dev \
-        libpq-dev && \
+    postgresql-client \
+    gcc \
+    python3-dev \
+    libpq-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file
@@ -32,8 +32,11 @@ COPY . .
 # Create logs directory
 RUN mkdir -p logs
 
+# Create static files directory
+RUN mkdir -p staticfiles
+
 # Expose application port
 EXPOSE 5000
 
-# Run the application
-CMD ["python", "main.py"]
+# Run the web application
+CMD ["python", "run_webapp.py"]

@@ -12,7 +12,8 @@ from services.usuario_service import UsuarioService
 from validators import PacienteValidator
 from exceptions import (
     PacienteNoEncontradoError,
-    PacienteDuplicadoError
+    EmailDuplicadoError,
+    TelefonoDuplicadoError
 )
 
 
