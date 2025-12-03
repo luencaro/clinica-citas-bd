@@ -61,6 +61,11 @@
                             <i class="bi bi-calendar-plus"></i> Agendar Cita
                         </a>
                         {% endif %}
+                        {% if user.rol == 'ADMIN' %}
+                        <a href="{% url 'medico_horarios' medico.id_medico %}" class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-calendar-week"></i> Gestionar Horarios
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

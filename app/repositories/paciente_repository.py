@@ -70,3 +70,7 @@ class PacienteRepository(BaseRepository[Paciente]):
         query = "SELECT * FROM paciente WHERE id_usuario = %s"
         result = db.execute_query(query, (id_usuario,), fetch='one')
         return Paciente.from_db_row(result) if result else None
+    
+    def find_by_usuario(self, id_usuario: int) -> Optional[Paciente]:
+        """Alias de find_by_usuario_id para compatibilidad"""
+        return self.find_by_usuario_id(id_usuario)

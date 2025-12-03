@@ -31,7 +31,7 @@ class Cita:
     
     def puede_cancelarse(self) -> bool:
         """Verifica si la cita puede ser cancelada"""
-        return self.estado == 'AGENDADA'
+        return self.estado in ['AGENDADA', 'REPROGRAMADA']
     
     def puede_reprogramarse(self) -> bool:
         """Verifica si la cita puede ser reprogramada"""
@@ -39,7 +39,7 @@ class Cita:
     
     def puede_atenderse(self) -> bool:
         """Verifica si la cita puede ser atendida"""
-        return self.estado == 'AGENDADA'
+        return self.estado in ['AGENDADA', 'REPROGRAMADA']
     
     def esta_pendiente(self) -> bool:
         """Verifica si la cita está pendiente"""

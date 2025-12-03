@@ -69,9 +69,10 @@
 
                         <!-- Motivo -->
                         <div class="mb-4">
-                            <label for="motivo" class="form-label fw-bold">Motivo de la Consulta *</label>
-                            <textarea class="form-control" id="motivo" name="motivo" rows="3" required
-                                placeholder="Describe el motivo de tu consulta..."></textarea>
+                            <label for="motivo" class="form-label fw-bold">Motivo de la Consulta (Opcional)</label>
+                            <textarea class="form-control" id="motivo" name="motivo" rows="3" minlength="3" maxlength="500"
+                                placeholder="Describe el motivo de tu consulta (mínimo 3 caracteres si se proporciona)..."></textarea>
+                            <small class="form-text text-muted">Opcional. Si proporcionas un motivo, debe tener al menos 3 caracteres.</small>
                         </div>
 
                         <!-- Observaciones -->
@@ -115,9 +116,8 @@
         }
 
         // Filtrar médicos por especialidad
-        const medicos = {{ medicos| safe
-    }};
-    const medicosFiltrados = medicos.filter(m => m.id_especialidad == especialidadId);
+        const medicos = {{ medicos|safe }};
+        const medicosFiltrados = medicos.filter(m => m.id_especialidad == especialidadId);
 
     medicosFiltrados.forEach(medico => {
         const option = document.createElement('option');
@@ -142,12 +142,18 @@
         }
 
         // Aquí se haría una llamada AJAX para obtener disponibilidad
-        // Por ahora generamos horarios genéricos
+        // Por ahora generamos horarios genéricos en intervalos de 30 minutos
         horaSelect.innerHTML = '<option value="">Seleccionar hora...</option>';
 
-        const horas = [
-            '08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'
-        ];
+        // Generar horarios de 08:00 a 18:00 en intervalos de 30 minutos
+        const horas = [];
+        for (let h = 8; h <= 17; h++) {
+            horas.push(`${String(h).padStart(2, '0')}:00`);
+            if (h < 18) {
+                horas.push(`${String(h).padStart(2, '0')}:30`);
+            }
+        }
+        horas.push('18:00');
 
         horas.forEach(hora => {
             const option = document.createElement('option');

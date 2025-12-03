@@ -61,14 +61,12 @@ class PacienteService:
             rol='PACIENTE'
         )
         
-        # Crear paciente
+        # Crear paciente (nota: genero y observaciones_medicas no están en la tabla)
         try:
             paciente = self.repo.create(
                 id_usuario=usuario.id_usuario,
                 fecha_nacimiento=fecha_nacimiento,
-                direccion=direccion,
-                genero=genero,
-                observaciones_medicas=observaciones_medicas
+                direccion=direccion
             )
             return usuario, paciente
         except Exception as e:
@@ -88,12 +86,11 @@ class PacienteService:
         if not self.repo.exists(id_paciente, 'id_paciente'):
             raise PacienteNoEncontradoError(f"Paciente {id_paciente} no encontrado")
         
+        # Solo actualizar campos que existen en la tabla
         return self.repo.update(
             id_paciente=id_paciente,
             fecha_nacimiento=fecha_nacimiento,
-            direccion=direccion,
-            genero=genero,
-            observaciones_medicas=observaciones_medicas
+            direccion=direccion
         )
     
     def obtener_por_id(self, id_paciente: int) -> Paciente:

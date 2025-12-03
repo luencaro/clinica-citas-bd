@@ -15,7 +15,7 @@ BEGIN
             fecha_cambio,
             estado_anterior,
             estado_nuevo,
-            observaciones
+            descripcion
         )
         VALUES (
             NEW.id_cita,
@@ -144,33 +144,6 @@ FOR EACH ROW
 EXECUTE FUNCTION validar_horario_laboral();
 
 
--- 5. TRIGGER: Actualizar fecha_modificacion automáticamente
--- Actualiza el timestamp en cualquier tabla al modificarse
-
-CREATE OR REPLACE FUNCTION actualizar_fecha_modificacion()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.fecha_modificacion = CURRENT_TIMESTAMP;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_update_usuario
-BEFORE UPDATE ON usuario
-FOR EACH ROW
-EXECUTE FUNCTION actualizar_fecha_modificacion();
-
-CREATE TRIGGER trigger_update_paciente
-BEFORE UPDATE ON paciente
-FOR EACH ROW
-EXECUTE FUNCTION actualizar_fecha_modificacion();
-
-CREATE TRIGGER trigger_update_medico
-BEFORE UPDATE ON medico
-FOR EACH ROW
-EXECUTE FUNCTION actualizar_fecha_modificacion();
-
-CREATE TRIGGER trigger_update_cita
-BEFORE UPDATE ON cita
-FOR EACH ROW
-EXECUTE FUNCTION actualizar_fecha_modificacion();
+-- NOTA: Los triggers de fecha_modificacion fueron removidos porque
+-- las tablas no tienen la columna fecha_modificacion en el esquema actual.
+-- El registro de cambios se hace a través de historial_cita para la tabla cita.

@@ -29,9 +29,12 @@ class BaseRepository(Generic[T]):
             return self.model_class.from_db_row(result)
         return None
     
-    def find_all(self, limit: int = None, offset: int = 0) -> List[T]:
+    def find_all(self, limit: int = None, offset: int = 0, order_by: str = None) -> List[T]:
         """Obtiene todos los registros"""
         query = f"SELECT * FROM {self.table_name}"
+        
+        if order_by:
+            query += f" ORDER BY {order_by}"
         
         if limit:
             query += f" LIMIT {limit} OFFSET {offset}"

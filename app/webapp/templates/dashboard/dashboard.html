@@ -115,6 +115,27 @@
 
     {% elif user.rol == 'MEDICO' %}
     <!-- Dashboard Médico -->
+    
+    {% if sin_horarios %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <h5 class="alert-heading">
+                    <i class="bi bi-exclamation-triangle"></i> Horarios no configurados
+                </h5>
+                <p class="mb-0">
+                    No tienes horarios de atención configurados. Los pacientes no podrán agendar citas contigo hasta que configures tu disponibilidad.
+                </p>
+                <hr>
+                <a href="{% url 'medico_horarios' medico.id_medico %}" class="btn btn-warning">
+                    <i class="bi bi-calendar-week"></i> Configurar Horarios Ahora
+                </a>
+                <button type="button" class="btn btn-link text-dark" data-bs-dismiss="alert">Hacerlo Después</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
     <div class="row">
         <div class="col-md-12 mb-4">
             <div class="card">
@@ -176,7 +197,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card">
                 <div class="card-body text-center">
                     <i class="bi bi-calendar3 text-primary" style="font-size: 3rem;"></i>
@@ -189,7 +210,20 @@
             </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar-week text-success" style="font-size: 3rem;"></i>
+                    <h5 class="card-title mt-3">Mis Horarios</h5>
+                    <p class="card-text">Gestiona tu disponibilidad de atención</p>
+                    <a href="{% url 'medico_horarios' medico.id_medico %}" class="btn btn-success">
+                        Gestionar Horarios
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
             <div class="card">
                 <div class="card-body text-center">
                     <i class="bi bi-clock-history text-info" style="font-size: 3rem;"></i>
@@ -205,7 +239,7 @@
 
     {% else %}
     <!-- Dashboard Admin -->
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-md-3">
             <div class="card">
                 <div class="card-body text-center">
@@ -246,6 +280,26 @@
                     <h5 class="card-title mt-3">Especialidades</h5>
                     <p class="card-text">Gestionar especialidades</p>
                     <a href="{% url 'especialidades_list' %}" class="btn btn-warning">Ver Especialidades</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="mb-2"><i class="bi bi-calendar-week text-success"></i> Gestión de Horarios de Médicos</h5>
+                            <p class="text-muted mb-0">Configura y administra los horarios de atención de todos los médicos del sistema. Ve a la lista de médicos y haz clic en "Gestionar Horarios".</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="{% url 'medicos_list' %}" class="btn btn-success">
+                                <i class="bi bi-calendar-week"></i> Ir a Médicos
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

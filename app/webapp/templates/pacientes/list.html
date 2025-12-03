@@ -29,8 +29,8 @@
                         <tr>
                             <td>{{ paciente.id_paciente }}</td>
                             <td>
-                                {% if paciente.usuario %}
-                                {{ paciente.usuario.nombre }} {{ paciente.usuario.apellido }}
+                                {% if paciente.nombre %}
+                                {{ paciente.nombre }} {{ paciente.apellido }}
                                 {% else %}
                                 N/A
                                 {% endif %}
@@ -46,15 +46,15 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if paciente.usuario %}
-                                {{ paciente.usuario.email }}
+                                {% if paciente.email %}
+                                {{ paciente.email }}
                                 {% else %}
                                 N/A
                                 {% endif %}
                             </td>
                             <td>
-                                {% if paciente.usuario %}
-                                {{ paciente.usuario.telefono }}
+                                {% if paciente.telefono %}
+                                {{ paciente.telefono }}
                                 {% else %}
                                 N/A
                                 {% endif %}

@@ -112,20 +112,30 @@ class DatabaseConnection:
             self.connection_pool.putconn(conn)
     
     def execute_query(self, query: str, params: Optional[tuple] = None, 
-                     fetch: str = 'all') -> Optional[list]:
+                     fetch: str = 'all', commit: bool = None) -> Optional[list]:
         """
-        Execute a SELECT query
+        Execute a query (SELECT, INSERT with RETURNING, UPDATE with RETURNING, etc.)
         
         Args:
             query: SQL query string
             params: Query parameters
             fetch: Fetch mode ('all', 'one', or 'none')
+            commit: Override commit behavior (None = auto-detect)
             
         Returns:
             Query results or None
         """
         try:
-            with self.get_cursor() as cursor:
+            # Check if query is a write operation (INSERT, UPDATE, DELETE, or stored procedure)
+            query_upper = query.strip().upper()
+            
+            if commit is None:
+                # Auto-detect: commit if it's a write operation or stored procedure call
+                is_write_operation = any(query_upper.startswith(op) for op in ['INSERT', 'UPDATE', 'DELETE'])
+                is_stored_procedure = 'SP_' in query_upper or 'SELECT SP_' in query_upper
+                commit = is_write_operation or is_stored_procedure
+            
+            with self.get_cursor(commit=commit) as cursor:
                 cursor.execute(query, params)
                 
                 if fetch == 'all':

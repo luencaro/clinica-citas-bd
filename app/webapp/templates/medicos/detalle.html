@@ -110,7 +110,7 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card mb-3">
                 <div class="card-header">
                     <h6 class="mb-0">Disponibilidad</h6>
                 </div>
@@ -121,6 +121,20 @@
                     </a>
                 </div>
             </div>
+
+            {% if user.rol == 'ADMIN' or user.rol == 'MEDICO' %}
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Gestión de Horarios</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">Administra los horarios de atención del médico</p>
+                    <a href="{% url 'medico_horarios' medico.id_medico %}" class="btn btn-outline-success w-100">
+                        <i class="bi bi-calendar-week"></i> Editar Horarios
+                    </a>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>

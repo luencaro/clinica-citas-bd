@@ -115,7 +115,7 @@
 
             {% if medico %}
             <!-- Información del Médico -->
-            <div class="card">
+            <div class="card mb-3">
                 <div class="card-header">
                     <h5 class="mb-0">Datos del Médico</h5>
                 </div>
@@ -130,6 +130,19 @@
                             <p class="mb-0">{{ medico.registro_profesional }}</p>
                         </div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Gestión de Horarios -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-calendar-week"></i> Horarios de Atención</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Gestiona tus horarios de atención para que los pacientes puedan agendar citas contigo.</p>
+                    <a href="{% url 'medico_horarios' medico.id_medico %}" class="btn btn-success w-100">
+                        <i class="bi bi-calendar-week"></i> Gestionar Mis Horarios
+                    </a>
                 </div>
             </div>
             {% endif %}

@@ -64,9 +64,14 @@ DECLARE
     v_id_cita INTEGER;
     v_disponible BOOLEAN;
 BEGIN
-    -- Validar que la fecha sea futura
-    IF p_fecha <= CURRENT_DATE THEN
-        RAISE EXCEPTION 'La fecha debe ser futura';
+    -- Validar que la fecha no sea pasada (permite hoy si la hora es futura)
+    IF p_fecha < CURRENT_DATE THEN
+        RAISE EXCEPTION 'La fecha no puede ser pasada';
+    END IF;
+    
+    -- Si es hoy, validar que la hora sea futura
+    IF p_fecha = CURRENT_DATE AND p_hora <= CURRENT_TIME THEN
+        RAISE EXCEPTION 'La hora debe ser futura';
     END IF;
     
     -- Validar disponibilidad

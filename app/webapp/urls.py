@@ -31,6 +31,8 @@ urlpatterns = [
     path('medicos/', views.medicos_list, name='medicos_list'),
     path('medicos/<int:id_medico>/', views.medico_detalle, name='medico_detalle'),
     path('medicos/<int:id_medico>/disponibilidad/', views.medico_disponibilidad, name='medico_disponibilidad'),
+    path('medicos/<int:id_medico>/horarios/', views.medico_horarios, name='medico_horarios'),
+    path('horarios/<int:id_horario>/eliminar/', views.horario_eliminar, name='horario_eliminar'),
     
     # Especialidades
     path('especialidades/', views.especialidades_list, name='especialidades_list'),
@@ -42,6 +44,9 @@ urlpatterns = [
     # Perfil
     path('perfil/', views.perfil, name='perfil'),
     path('perfil/editar/', views.perfil_editar, name='perfil_editar'),
+    
+    # Reportes (Admin)
+    path('reportes/', views.reportes, name='reportes'),
     
     # Notificaciones
     path('notificaciones/', views.notificaciones, name='notificaciones'),
