@@ -177,5 +177,3 @@ sudo docker compose up -d
 ### Puertos
 - Aplicación: http://localhost:5000
 - PostgreSQL: localhost:5432 (interno), 5433 (externo)
-
-Proyecto académico - Universidad 2025

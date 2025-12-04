@@ -76,7 +76,6 @@
             <div class="card">
                 <div class="card-header">
                     <h5><i class="bi bi-pie-chart"></i> Distribución por Estado</h5>
-                    <small class="text-muted">Vista SQL: vista_estadisticas_citas</small>
                 </div>
                 <div class="card-body">
                     <table class="table table-sm">
@@ -194,7 +193,6 @@
     <div class="card mb-4">
         <div class="card-header">
             <h5><i class="bi bi-hospital"></i> Citas por Especialidad</h5>
-            <small class="text-muted">Vista SQL: vista_medicos_por_especialidad + agregaciones</small>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -234,7 +232,6 @@
     <div class="card mb-4">
         <div class="card-header">
             <h5><i class="bi bi-people"></i> Pacientes Más Frecuentes (Top 10)</h5>
-            <small class="text-muted">Vista SQL: vista_pacientes_frecuentes</small>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -242,37 +239,28 @@
                     <thead>
                         <tr>
                             <th>Paciente</th>
-                            <th>Edad</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
                             <th>Total Citas</th>
                             <th>Atendidas</th>
                             <th>Canceladas</th>
-                            <th>Inasistencias</th>
                             <th>Última Cita</th>
-                            <th>Tasa Asistencia</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for pac in pacientes_frecuentes %}
                         <tr>
                             <td><strong>{{ pac.paciente }}</strong></td>
-                            <td>{{ pac.edad }} años</td>
-                            <td>{{ pac.total_citas }}</td>
+                            <td>{{ pac.email }}</td>
+                            <td>{{ pac.telefono }}</td>
+                            <td><span class="badge bg-primary">{{ pac.total_citas }}</span></td>
                             <td><span class="text-success">{{ pac.citas_atendidas }}</span></td>
                             <td><span class="text-warning">{{ pac.citas_canceladas }}</span></td>
-                            <td><span class="text-danger">{{ pac.inasistencias }}</span></td>
                             <td>{{ pac.ultima_cita }}</td>
-                            <td>
-                                <span class="badge 
-                                    {% if pac.tasa_asistencia >= 80 %}bg-success
-                                    {% elif pac.tasa_asistencia >= 50 %}bg-warning
-                                    {% else %}bg-danger{% endif %}">
-                                    {{ pac.tasa_asistencia }}%
-                                </span>
-                            </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="8" class="text-center text-muted">No hay datos disponibles</td>
+                            <td colspan="7" class="text-center text-muted">No hay datos disponibles</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -285,7 +273,6 @@
     <div class="card mb-4">
         <div class="card-header">
             <h5><i class="bi bi-calendar-week"></i> Ocupación de Médicos (Próximos 7 Días)</h5>
-            <small class="text-muted">Vista SQL: vista_ocupacion_diaria_medicos</small>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -295,30 +282,20 @@
                             <th>Fecha</th>
                             <th>Médico</th>
                             <th>Especialidad</th>
-                            <th>Citas</th>
-                            <th>Agendadas</th>
-                            <th>Ocupación</th>
+                            <th>Total Citas</th>
+                            <th>Atendidas</th>
+                            <th>Canceladas</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for ocu in ocupacion_medicos %}
                         <tr>
                             <td>{{ ocu.fecha }}</td>
-                            <td>{{ ocu.medico }}</td>
+                            <td><strong>{{ ocu.medico }}</strong></td>
                             <td>{{ ocu.especialidad }}</td>
-                            <td>{{ ocu.total_citas }}</td>
-                            <td>{{ ocu.agendadas }}</td>
-                            <td>
-                                <div class="progress" style="height: 20px;">
-                                    <div class="progress-bar 
-                                        {% if ocu.porcentaje_ocupacion >= 80 %}bg-danger
-                                        {% elif ocu.porcentaje_ocupacion >= 60 %}bg-warning
-                                        {% else %}bg-success{% endif %}" 
-                                        role="progressbar" style="width: {{ ocu.porcentaje_ocupacion }}%">
-                                        {{ ocu.porcentaje_ocupacion }}%
-                                    </div>
-                                </div>
-                            </td>
+                            <td><span class="badge bg-primary">{{ ocu.total_citas }}</span></td>
+                            <td><span class="text-success">{{ ocu.atendidas }}</span></td>
+                            <td><span class="text-warning">{{ ocu.canceladas }}</span></td>
                         </tr>
                         {% empty %}
                         <tr>
@@ -329,12 +306,6 @@
                 </table>
             </div>
         </div>
-    </div>
-
-    <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> 
-        <strong>Nota técnica:</strong> Estos reportes usan las <strong>9 vistas SQL</strong> creadas en PostgreSQL 
-        y el <strong>stored procedure sp_estadisticas_medico()</strong> para optimizar las consultas.
     </div>
 </div>
 {% endblock %}
