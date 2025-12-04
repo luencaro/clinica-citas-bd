@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ medico.nombre }} {{ medico.apellido }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <a href="{% url 'medicos_list' %}" class="btn btn-secondary mb-3">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+            <h1 class="display-6">
+                <i class="bi bi-person-badge"></i>
+                Dr/a. {{ medico.nombre }} {{ medico.apellido }}
+            </h1>
+        </div>
+        {% if user.rol == 'PACIENTE' or user.rol == 'ADMIN' %}
+        <div class="col-auto">
+            <a href="{% url 'cita_nueva' %}?medico={{ medico.id_medico }}" class="btn btn-primary">
+                <i class="bi bi-calendar-plus"></i> Agendar Cita
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <!-- Información del Médico -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Información del Médico</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong><i class="bi bi-grid"></i> Especialidad:</strong>
+                            <p class="mb-0">{{ medico.especialidad_nombre }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong><i class="bi bi-card-text"></i> Registro Profesional:</strong>
+                            <p class="mb-0">{{ medico.registro_profesional }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong><i class="bi bi-envelope"></i> Email:</strong>
+                            <p class="mb-0">{{ medico.email }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong><i class="bi bi-telephone"></i> Teléfono:</strong>
+                            <p class="mb-0">{{ medico.telefono }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Horarios de Atención -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock"></i> Horarios de Atención</h5>
+                </div>
+                <div class="card-body">
+                    {% if horarios %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Día</th>
+                                    <th>Hora Inicio</th>
+                                    <th>Hora Fin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for horario in horarios %}
+                                <tr>
+                                    <td>
+                                        {% if horario.dia_semana == 1 %}Lunes
+                                        {% elif horario.dia_semana == 2 %}Martes
+                                        {% elif horario.dia_semana == 3 %}Miércoles
+                                        {% elif horario.dia_semana == 4 %}Jueves
+                                        {% elif horario.dia_semana == 5 %}Viernes
+                                        {% elif horario.dia_semana == 6 %}Sábado
+                                        {% else %}Domingo{% endif %}
+                                    </td>
+                                    <td>{{ horario.hora_inicio }}</td>
+                                    <td>{{ horario.hora_fin }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No hay horarios configurados</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Lateral -->
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body text-center">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mx-auto"
+                        style="width: 120px; height: 120px; font-size: 4rem;">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <h5 class="mt-3">{{ medico.nombre }} {{ medico.apellido }}</h5>
+                    <p class="text-muted mb-0">{{ medico.especialidad_nombre }}</p>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="mb-0">Disponibilidad</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">Consulta la disponibilidad del médico para agendar tu cita</p>
+                    <a href="{% url 'medico_disponibilidad' medico.id_medico %}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-calendar-check"></i> Ver Disponibilidad
+                    </a>
+                </div>
+            </div>
+
+            {% if user.rol == 'ADMIN' or user.rol == 'MEDICO' %}
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Gestión de Horarios</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">Administra los horarios de atención del médico</p>
+                    <a href="{% url 'medico_horarios' medico.id_medico %}" class="btn btn-outline-success w-100">
+                        <i class="bi bi-calendar-week"></i> Editar Horarios
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -194,6 +194,31 @@ class CitaRepository(BaseRepository[Cita]):
         result = db.execute_query(query, tuple(params), fetch='one')
         return result is not None
     
+    def existe_cita_paciente(
+        self,
+        id_paciente: int,
+        fecha: date,
+        hora: time,
+        exclude_id: int = None
+    ) -> bool:
+        """Verifica si el paciente ya tiene una cita en ese horario"""
+        query = """
+            SELECT 1 FROM cita 
+            WHERE id_paciente = %s 
+            AND fecha = %s 
+            AND hora = %s
+            AND estado NOT IN ('CANCELADA')
+        """
+        params = [id_paciente, fecha, hora]
+        
+        if exclude_id:
+            query += " AND id_cita != %s"
+            params.append(exclude_id)
+        
+        query += " LIMIT 1"
+        result = db.execute_query(query, tuple(params), fetch='one')
+        return result is not None
+    
     def count_by_estado(self, estado: str) -> int:
         """Cuenta citas por estado"""
         query = "SELECT COUNT(*) FROM cita WHERE estado = %s"

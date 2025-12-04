@@ -70,20 +70,55 @@ class MedicoService:
             activo=activo
         )
         
-        # Crear médico
+        # Crear médico (nota: descripcion no está en la tabla)
         try:
             medico = self.repo.create(
                 id_usuario=usuario.id_usuario,
                 id_especialidad=id_especialidad,
                 registro_profesional=registro_profesional,
-                descripcion=descripcion,
                 activo=activo
             )
+            
+            # Crear horarios por defecto (Lunes a Viernes 08:00 - 17:00)
+            self._crear_horarios_default(medico.id_medico)
+            
             return usuario, medico
         except Exception as e:
             # Si falla, desactivar usuario
             self.usuario_service.desactivar_usuario(usuario.id_usuario)
             raise e
+    
+    def _crear_horarios_default(self, id_medico: int):
+        """
+        Crea horarios por defecto para un médico nuevo
+        Lunes a Viernes: 08:00 - 17:00
+        """
+        horarios_default = [
+            (1, '08:00:00', '17:00:00'),  # Lunes
+            (2, '08:00:00', '17:00:00'),  # Martes
+            (3, '08:00:00', '17:00:00'),  # Miércoles
+            (4, '08:00:00', '17:00:00'),  # Jueves
+            (5, '08:00:00', '17:00:00'),  # Viernes
+        ]
+        
+        from datetime import time as datetime_time
+        
+        for dia, hora_inicio_str, hora_fin_str in horarios_default:
+            try:
+                # Convertir strings a time objects
+                hora_inicio = datetime_time.fromisoformat(hora_inicio_str)
+                hora_fin = datetime_time.fromisoformat(hora_fin_str)
+                
+                self.horario_repo.create(
+                    id_medico=id_medico,
+                    dia_semana=dia,
+                    hora_inicio=hora_inicio,
+                    hora_fin=hora_fin
+                )
+            except Exception as e:
+                # Log error pero continuar con otros horarios
+                print(f"Error creando horario default para día {dia}: {str(e)}")
+                continue
     
     def actualizar_medico(
         self,

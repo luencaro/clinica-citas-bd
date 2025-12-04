@@ -50,7 +50,7 @@ class CitaService:
         observaciones: str = None
     ) -> Cita:
         """
-        Agenda una nueva cita con validaciones completas
+        Agenda una nueva cita usando STORED PROCEDURE sp_agendar_cita
         
         Reglas de negocio:
         1. Paciente debe existir
@@ -59,18 +59,18 @@ class CitaService:
         4. Hora debe estar en horario del médico
         5. No debe existir otra cita en ese horario
         6. Motivo debe ser válido
+        
+        NOTA: Usa stored procedure que implementa todas las validaciones en PostgreSQL
         """
-        # Validar datos básicos
-        CitaValidator.validar_fecha_cita(fecha)
-        CitaValidator.validar_hora_cita(hora)
+        # Validar datos básicos en backend
         CitaValidator.validar_motivo(motivo)
         
-        # Validar paciente
+        # Validar paciente existe
         paciente = self.paciente_repo.find_by_id(id_paciente, 'id_paciente')
         if not paciente:
             raise PacienteNoEncontradoError(f"Paciente {id_paciente} no encontrado")
         
-        # Validar médico
+        # Validar médico existe y está activo
         medico = self.medico_repo.find_by_id(id_medico, 'id_medico')
         if not medico:
             raise MedicoNoEncontradoError(f"Médico {id_medico} no encontrado")
@@ -78,30 +78,68 @@ class CitaService:
         if not medico.activo:
             raise MedicoInactivoError(f"El médico {id_medico} no está activo")
         
-        # Validar disponibilidad del médico
-        self._validar_disponibilidad_medico(id_medico, fecha, hora)
-        
-        # Verificar que no exista cita duplicada
-        if self.repo.existe_cita(id_medico, fecha, hora):
+        # Verificar que el paciente no tenga otra cita a la misma hora
+        if self.repo.existe_cita_paciente(id_paciente, fecha, hora):
             raise CitaDuplicadaError(
-                f"Ya existe una cita para el médico {id_medico} "
+                f"El paciente ya tiene una cita agendada "
                 f"el {fecha} a las {hora}"
             )
         
-        # Crear la cita
-        cita = self.repo.create(
-            id_paciente=id_paciente,
-            id_medico=id_medico,
-            fecha=fecha,
-            hora=hora,
-            motivo=motivo,
-            observaciones=observaciones
-        )
-        
-        # Crear notificaciones (esto también puede hacerse con trigger)
-        self._crear_notificaciones_nueva_cita(cita)
-        
-        return cita
+        # USAR STORED PROCEDURE para agendar la cita
+        # El procedure valida disponibilidad, horarios, y crea la cita
+        try:
+            from database import db
+            query = """
+                SELECT sp_agendar_cita(%s, %s, %s, %s, %s, %s) AS id_cita
+            """
+            result = db.execute_query(
+                query,
+                (id_paciente, id_medico, fecha, hora, motivo, observaciones),
+                fetch='one'
+            )
+            
+            if not result:
+                raise CitaNoDisponibleError("No se pudo agendar la cita")
+            
+            id_cita = result[0]
+            
+            # Recuperar la cita creada
+            cita = self.repo.find_by_id(id_cita, 'id_cita')
+            return cita
+            
+        except Exception as e:
+            # El stored procedure lanza excepciones descriptivas
+            error_msg = str(e)
+            if "fecha debe ser futura" in error_msg.lower() or "fecha no puede ser pasada" in error_msg.lower():
+                raise FechaPasadaError("La fecha de la cita no puede ser en el pasado")
+            elif "hora debe ser futura" in error_msg.lower():
+                raise FechaPasadaError("La hora de la cita debe ser futura (no puede ser para hoy en una hora que ya pasó)")
+            elif "no está disponible" in error_msg.lower():
+                # Proporcionar información adicional sobre disponibilidad
+                dia_semana = fecha.weekday() + 1  # Python: 0=Lun, PostgreSQL: 1=Lun
+                horarios = self.horario_repo.find_by_medico(id_medico)
+                tiene_horario_ese_dia = any(h.dia_semana == dia_semana for h in horarios)
+                
+                if not tiene_horario_ese_dia:
+                    dias = {1: 'lunes', 2: 'martes', 3: 'miércoles', 4: 'jueves', 5: 'viernes', 6: 'sábado', 7: 'domingo'}
+                    raise CitaNoDisponibleError(
+                        f"El médico seleccionado no trabaja los {dias[dia_semana]}. "
+                        f"Por favor, selecciona otro día."
+                    )
+                
+                # Verificar si hay conflicto de horario
+                citas_existentes = self.repo.find_by_fecha(fecha, id_medico)
+                if any(c.hora == hora and c.estado not in ['CANCELADA', 'NO_ASISTIO'] for c in citas_existentes):
+                    raise CitaNoDisponibleError(
+                        f"Ya existe una cita agendada para ese médico el {fecha} a las {hora}. "
+                        f"Por favor, selecciona otra hora."
+                    )
+                
+                raise CitaNoDisponibleError(
+                    f"El horario seleccionado no está disponible. La hora debe estar dentro del horario laboral del médico."
+                )
+            else:
+                raise CitaNoDisponibleError(f"Error al agendar cita: {error_msg}")
     
     def cancelar_cita(
         self,
@@ -109,30 +147,40 @@ class CitaService:
         motivo_cancelacion: str = None
     ) -> Cita:
         """
-        Cancela una cita
+        Cancela una cita usando STORED PROCEDURE sp_cancelar_cita
         
         Reglas de negocio:
         - Solo se pueden cancelar citas AGENDADAS
         - Se registra el motivo de cancelación
+        
+        NOTA: Usa stored procedure que valida estados y crea historial automáticamente
         """
+        # Verificar que la cita existe antes de llamar al procedure
         cita = self.obtener_por_id(id_cita)
         
-        if not cita.puede_cancelarse():
-            raise CitaNoPuedeCancelarseError(
-                f"La cita {id_cita} no puede cancelarse (estado: {cita.estado})"
+        # USAR STORED PROCEDURE para cancelar
+        # El procedure valida el estado y actualiza con triggers
+        try:
+            from database import db
+            query = """
+                SELECT sp_cancelar_cita(%s, %s)
+            """
+            db.execute_query(
+                query,
+                (id_cita, motivo_cancelacion),
+                fetch='one'
             )
-        
-        # Actualizar estado
-        cita_actualizada = self.repo.update_estado(
-            id_cita,
-            'CANCELADA',
-            motivo_cancelacion
-        )
-        
-        # Notificar cancelación
-        self._notificar_cancelacion(cita_actualizada)
-        
-        return cita_actualizada
+            
+            # Recuperar la cita actualizada
+            cita_actualizada = self.repo.find_by_id(id_cita, 'id_cita')
+            return cita_actualizada
+            
+        except Exception as e:
+            error_msg = str(e)
+            if "no puede cancelarse" in error_msg.lower() or "solo se pueden cancelar" in error_msg.lower():
+                raise CitaNoPuedeCancelarseError(error_msg)
+            else:
+                raise CitaNoPuedeCancelarseError(f"Error al cancelar cita: {error_msg}")
     
     def reprogramar_cita(
         self,
@@ -190,7 +238,7 @@ class CitaService:
         Marca una cita como atendida
         
         Reglas de negocio:
-        - Solo se pueden atender citas AGENDADAS
+        - Solo se pueden atender citas AGENDADAS o REPROGRAMADAS
         """
         cita = self.obtener_por_id(id_cita)
         

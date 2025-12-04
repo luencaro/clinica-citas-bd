@@ -1,0 +1,28 @@
+Una clínica necesita automatizar el proceso de agendamiento de citas médicas para sus pacientes, el sistema debe estar respaldado por una base de datos relacional que permita la correcta organización y consulta de la información relevante. Los pacientes pueden solicitar citas con diferentes médicos, quienes tienen especialidades específicas y horarios de atención determinados. Cada cita debe incluir la fecha, hora, paciente, médico y el motivo de la consulta.
+El sistema debe permitir:
+•	Gestión de pacientes: registrar, modificar y consultar datos personales y de contacto.
+•	Gestión de médicos: registrar información, especialidad y horarios de atención.
+•	Programación de citas: agendar, cancelar, reprogramar y consultar citas médicas, evitando solapamientos en la agenda del médico.
+•	Visualizar el calendario de citas de cada médico.
+•	Controlar que no se solapen dos citas para el mismo médico en el mismo horario.
+•	Permitir la cancelación y reprogramación de citas, permitiendo llevar un historial de citas para cada paciente.
+•	Consulta del calendario: los pacientes y médicos deben poder visualizar las citas según su perfil.
+
+•	Autenticación y roles: controlar acceso según tipo de usuario (administrador, médico, paciente).
+
+El sistema debe permitir al paciente:
+•	Crear una cuenta para ingresar al sistema.
+•	Agendar, cancelar y reprogramar citas.
+•	Recibir notificación de citas.
+•	Consultar citas agendadas.
+
+El sistema debe permitir al médico:
+•	Crear una cuenta para ingresar al sistema.
+•	Confirmar disponibilidad.
+•	Consultar agenda médica.
+El sistema debe permitir al administrador:
+•	Iniciar sesión al sistema.
+•	Administrar usuarios.
+•	Agendar, cancelar y reprogramar citas.
+•	Consultar citas agendadas.
+•	Generar reportes.

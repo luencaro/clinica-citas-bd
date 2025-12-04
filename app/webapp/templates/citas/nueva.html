@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}Agendar Cita{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-calendar-plus"></i> Agendar Nueva Cita
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" action="{% url 'cita_nueva' %}" id="citaForm">
+                        {% csrf_token %}
+
+                        {% if user.rol == 'ADMIN' %}
+                        <!-- Selección de Paciente (solo admin) -->
+                        <div class="mb-4">
+                            <label for="id_paciente" class="form-label fw-bold">Paciente *</label>
+                            <select class="form-select" id="id_paciente" name="id_paciente" required>
+                                <option value="">Seleccionar paciente...</option>
+                                {% for paciente in pacientes %}
+                                <option value="{{ paciente.id_paciente }}">
+                                    {{ paciente.nombre }} {{ paciente.apellido }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        <!-- Especialidad -->
+                        <div class="mb-4">
+                            <label for="especialidad" class="form-label fw-bold">Especialidad *</label>
+                            <select class="form-select" id="especialidad" name="especialidad" required>
+                                <option value="">Seleccionar especialidad...</option>
+                                {% for esp in especialidades %}
+                                <option value="{{ esp.id_especialidad }}">{{ esp.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Médico -->
+                        <div class="mb-4">
+                            <label for="id_medico" class="form-label fw-bold">Médico *</label>
+                            <select class="form-select" id="id_medico" name="id_medico" required disabled>
+                                <option value="">Primero selecciona una especialidad...</option>
+                            </select>
+                        </div>
+
+                        <!-- Fecha y Hora -->
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="fecha" class="form-label fw-bold">Fecha *</label>
+                                <input type="date" class="form-control" id="fecha" name="fecha" required
+                                    min="{{ today|date:'Y-m-d' }}">
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label for="hora" class="form-label fw-bold">Hora *</label>
+                                <select class="form-select" id="hora" name="hora" required disabled>
+                                    <option value="">Selecciona médico y fecha...</option>
+                                </select>
+                                <small class="text-muted">Horarios disponibles según el médico</small>
+                            </div>
+                        </div>
+
+                        <!-- Motivo -->
+                        <div class="mb-4">
+                            <label for="motivo" class="form-label fw-bold">Motivo de la Consulta (Opcional)</label>
+                            <textarea class="form-control" id="motivo" name="motivo" rows="3" minlength="3" maxlength="500"
+                                placeholder="Describe el motivo de tu consulta (mínimo 3 caracteres si se proporciona)..."></textarea>
+                            <small class="form-text text-muted">Opcional. Si proporcionas un motivo, debe tener al menos 3 caracteres.</small>
+                        </div>
+
+                        <!-- Observaciones -->
+                        <div class="mb-4">
+                            <label for="observaciones" class="form-label fw-bold">Observaciones (Opcional)</label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" rows="2"
+                                placeholder="Información adicional..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Agendar Cita
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Filtrar médicos por especialidad
+    document.getElementById('especialidad').addEventListener('change', function () {
+        const especialidadId = this.value;
+        const medicoSelect = document.getElementById('id_medico');
+        const horaSelect = document.getElementById('hora');
+
+        medicoSelect.innerHTML = '<option value="">Seleccionar médico...</option>';
+        horaSelect.innerHTML = '<option value="">Selecciona médico y fecha...</option>';
+        horaSelect.disabled = true;
+
+        if (!especialidadId) {
+            medicoSelect.disabled = true;
+            return;
+        }
+
+        // Filtrar médicos por especialidad
+        const medicos = {{ medicos|safe }};
+        const medicosFiltrados = medicos.filter(m => m.id_especialidad == especialidadId);
+
+    medicosFiltrados.forEach(medico => {
+        const option = document.createElement('option');
+        option.value = medico.id_medico;
+        option.textContent = `Dr/a. ${medico.nombre} ${medico.apellido}`;
+        medicoSelect.appendChild(option);
+    });
+
+    medicoSelect.disabled = false;
+});
+
+    // Cargar disponibilidad cuando se selecciona médico y fecha
+    function cargarDisponibilidad() {
+        const medicoId = document.getElementById('id_medico').value;
+        const fecha = document.getElementById('fecha').value;
+        const horaSelect = document.getElementById('hora');
+
+        if (!medicoId || !fecha) {
+            horaSelect.innerHTML = '<option value="">Selecciona médico y fecha...</option>';
+            horaSelect.disabled = true;
+            return;
+        }
+
+        // Aquí se haría una llamada AJAX para obtener disponibilidad
+        // Por ahora generamos horarios genéricos en intervalos de 30 minutos
+        horaSelect.innerHTML = '<option value="">Seleccionar hora...</option>';
+
+        // Generar horarios de 08:00 a 18:00 en intervalos de 30 minutos
+        const horas = [];
+        for (let h = 8; h <= 17; h++) {
+            horas.push(`${String(h).padStart(2, '0')}:00`);
+            if (h < 18) {
+                horas.push(`${String(h).padStart(2, '0')}:30`);
+            }
+        }
+        horas.push('18:00');
+
+        horas.forEach(hora => {
+            const option = document.createElement('option');
+            option.value = hora;
+            option.textContent = hora;
+            horaSelect.appendChild(option);
+        });
+
+        horaSelect.disabled = false;
+    }
+
+    document.getElementById('id_medico').addEventListener('change', cargarDisponibilidad);
+    document.getElementById('fecha').addEventListener('change', cargarDisponibilidad);
+
+    // Set min date to today
+    document.getElementById('fecha').min = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}

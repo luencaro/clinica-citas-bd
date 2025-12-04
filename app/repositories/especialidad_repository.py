@@ -65,6 +65,12 @@ class EspecialidadRepository(BaseRepository[Especialidad]):
         result = db.execute_query(query, (nombre,), fetch='one')
         return Especialidad.from_db_row(result) if result else None
     
+    def get_all(self) -> List[Especialidad]:
+        """Obtiene todas las especialidades"""
+        query = "SELECT * FROM especialidad ORDER BY nombre"
+        results = db.execute_query(query, fetch='all')
+        return [Especialidad.from_db_row(row) for row in results]
+    
     def find_activas(self) -> List[Especialidad]:
         """Obtiene todas las especialidades activas"""
         query = "SELECT * FROM especialidad WHERE activo = TRUE ORDER BY nombre"

@@ -1,6 +1,10 @@
 # Python dependencies for the Medical Appointments Management System
 # ============================================================================
 
+# Web Framework
+Django>=4.2,<5.0
+django-environ==0.11.2
+
 # PostgreSQL database adapter
 psycopg2-binary==2.9.9
 

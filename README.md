@@ -1,134 +1,179 @@
 # 🏥 Sistema de Gestión de Citas Médicas
 
-Sistema completo de gestión de citas médicas con arquitectura en capas, desarrollado en Python con PostgreSQL.
+Sistema completo de gestión de citas médicas desarrollado con Python, PostgreSQL y Django, utilizando arquitectura en capas con stored procedures y triggers.
 
-## 📋 Tabla de Contenidos
+## 🚀 Inicio Rápido
 
-- [Características](#características)
-- [Arquitectura](#arquitectura)
-- [Tecnologías](#tecnologías)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Instalación](#instalación)
-- [Base de Datos](#base-de-datos)
-- [Lógica de Negocio](#lógica-de-negocio)
-- [Próximos Pasos](#próximos-pasos)
+```bash
+# Levantar el sistema
+sudo docker compose up -d
 
-## ✨ Características
+# Acceder a la aplicación
+http://localhost:5000
 
-### Funcionalidades Principales
-- ✅ **Gestión de Usuarios**: Pacientes, Médicos y Administradores con autenticación bcrypt
-- ✅ **Especialidades Médicas**: Catálogo de especialidades con médicos asignados
-- ✅ **Agendamiento de Citas**: Sistema completo con validación de disponibilidad
-- ✅ **Horarios de Médicos**: Configuración flexible por día de la semana
-- ✅ **Notificaciones**: Sistema automático de notificaciones por triggers
-- ✅ **Historial de Cambios**: Auditoría completa de cambios de estado de citas
-- ✅ **Validaciones Completas**: Reglas de negocio implementadas en todas las capas
+# Credenciales de prueba
+Admin:    admin@clinica.com / Clinica2025!
+Médico:   juan.fernandez@email.com / Clinica2025!
+Paciente: luis.gomez@email.com / Clinica2025!
+```
 
-### Características Técnicas
-- 🔐 **Seguridad**: Contraseñas hasheadas con bcrypt, validaciones exhaustivas
-- 🗄️ **Base de Datos**: PostgreSQL 16 con triggers, stored procedures y vistas
-- ��️ **Arquitectura en Capas**: Separación clara de responsabilidades
-- 🐳 **Docker**: Contenedorización completa del sistema
-- 📊 **Vistas SQL**: 9 vistas para reportes y estadísticas
-- 🔄 **Triggers**: 5 triggers automáticos para auditoría y notificaciones
-- 📦 **Stored Procedures**: 7 procedimientos almacenados para lógica compleja
+## ✨ Características Principales
+
+- ✅ **Gestión de Citas**: Agendamiento con validación de disponibilidad en tiempo real
+- ✅ **3 Roles**: Admin, Médico y Paciente con permisos diferenciados
+- ✅ **Stored Procedures**: Lógica crítica de negocio en PostgreSQL
+- ✅ **Triggers Automáticos**: Auditoría y notificaciones
+- ✅ **Reportes SQL**: 9 vistas para dashboard administrativo
+- ✅ **Autenticación Segura**: bcrypt para contraseñas
+- ✅ **Interfaz Web**: Django con plantillas Bootstrap
 
 ## 🏛️ Arquitectura
 
 ```
 ┌─────────────────────────────────────┐
-│         UI Layer (Django)           │  ← Interfaz para el usuario final
+│      Django Web Interface           │  ← Templates + Views
 ├─────────────────────────────────────┤
-│       Business Logic Layer          │
-│  ┌─────────────────────────────┐   │
-│  │        Services             │   │  ← Lógica de negocio
-│  └─────────────────────────────┘   │
+│         Service Layer               │  ← Lógica de negocio
 ├─────────────────────────────────────┤
-│      Data Access Layer              │
-│  ┌─────────────────────────────┐   │
-│  │      Repositories           │   │  ← Acceso a datos
-│  └─────────────────────────────┘   │
+│       Repository Pattern            │  ← Acceso a datos
 ├─────────────────────────────────────┤
-│       Domain Layer                  │
-│  ┌──────────┬──────────┬────────┐  │
-│  │ Models   │Validators│Excep.  │  │  ← Dominio
-│  └──────────┴──────────┴────────┘  │
-├─────────────────────────────────────┤
-│      Database Layer                 │
-│  PostgreSQL + Triggers + Views      │
+│  PostgreSQL (Triggers + Procedures) │  ← Base de datos
 └─────────────────────────────────────┘
-```
-
-## 🛠️ Tecnologías
-
-- **Python 3.11**: Lenguaje principal
-- **PostgreSQL 16**: Base de datos relacional
-- **Docker**: Contenedorización
-- **bcrypt**: Hashing de contraseñas
-- **Django 4.2**: Framework web (preparado)
-
-## 📁 Estructura del Proyecto
-
-```
-app/
-├── models/              # 8 modelos del dominio
-├── repositories/        # 7 repositorios de datos
-├── services/           # 5 servicios de negocio
-├── exceptions.py       # 20+ excepciones
-├── validators.py       # Validaciones completas
-└── database.py         # Conexión PostgreSQL
-
-db/
-├── schema.sql          # 8 tablas
-├── triggers.sql        # 5 triggers
-├── stored_procedures.sql # 7 procedures
-└── views.sql          # 9 vistas
-```
-
-## 🚀 Instalación
-
-```bash
-# Levantar contenedores
-sudo docker compose up -d
-
-# Verificar estado
-make status
 ```
 
 ## 🗄️ Base de Datos
 
-### Conexión
-- Host: `localhost:5433`
-- Usuario: `clinica_admin`
-- Database: `clinica_citas`
-- Admin: `admin@clinica.com` / `Clinica2025!`
-
 ### Tablas (8)
-usuario | paciente | medico | especialidad | horario_medico | cita | historial_cita | notificacion
-
-### Triggers (5)
-- Auditoría automática de cambios
-- Notificaciones al agendar/cancelar
-- Validación de horarios laborales (06:00-22:00)
-- Actualización de timestamps
+- `usuario` - Usuarios del sistema
+- `paciente` - Información de pacientes
+- `medico` - Médicos con especialidades
+- `especialidad` - Catálogo de especialidades
+- `horario_medico` - Horarios por día de semana
+- `cita` - Citas médicas
+- `historial_cita` - Auditoría de cambios
+- `notificacion` - Sistema de notificaciones
 
 ### Stored Procedures (7)
-- sp_validar_disponibilidad
-- sp_agendar_cita
-- sp_cancelar_cita
-- sp_reprogramar_cita
-- sp_obtener_disponibilidad_dia
-- sp_proximas_citas_paciente
-- sp_estadisticas_medico
+- `sp_validar_disponibilidad()` - Verifica horarios libres
+- `sp_agendar_cita()` - Crea citas con validaciones
+- `sp_cancelar_cita()` - Cancela citas con auditoría
+- `sp_reprogramar_cita()` - Cambia fecha/hora de citas
+- `sp_obtener_disponibilidad_dia()` - Slots disponibles
+- `sp_proximas_citas_paciente()` - Próximas citas
+- `sp_estadisticas_medico()` - Reportes por médico
 
-### Vistas (9)
-- vista_citas_completas (JOIN completo)
-- vista_disponibilidad_medicos
-- vista_estadisticas_citas
-- vista_proximas_citas
-- vista_historial_citas
-- vista_medicos_por_especialidad
-- vista_notificaciones_pendientes
-- vista_ocupacion_diaria_medicos
-- vista_pacientes_frecuentes
----
+### Triggers (5)
+- `trigger_historial_cita` - Registra cambios de estado
+- `trigger_notificar_nueva_cita` - Notifica al agendar
+- `trigger_notificar_cancelacion` - Notifica al cancelar
+- `trigger_validar_horario_laboral` - Valida rango 06:00-22:00
+
+### Vistas SQL (9)
+- `vista_estadisticas_citas` - Estadísticas generales
+- `vista_pacientes_frecuentes` - Top pacientes
+- `vista_citas_por_medico` - Citas por médico
+- `vista_citas_por_especialidad` - Por especialidad
+- `vista_horarios_demandados` - Horarios populares
+- `vista_citas_por_fecha` - Estadísticas diarias
+- `vista_ocupacion_diaria_medicos` - Ocupación
+- `vista_resumen_medicos` - Resumen general
+- `vista_tasa_cancelacion_medicos` - Tasa de cancelación
+
+## 📁 Estructura del Proyecto
+
+```
+clinica-citas-bd/
+├── app/
+│   ├── database/           # Conexión y pooling PostgreSQL
+│   ├── models/             # 8 modelos del dominio
+│   ├── repositories/       # 8 repositorios (patrón Repository)
+│   ├── services/           # 4 servicios de negocio
+│   ├── validators.py       # Validaciones de datos
+│   ├── exceptions.py       # Excepciones personalizadas
+│   └── webapp/
+│       ├── views.py        # Controladores Django
+│       ├── urls.py         # Rutas
+│       └── templates/      # Plantillas HTML
+├── db/
+│   └── init/               # Scripts de inicialización
+│       ├── 01-schema.sql
+│       ├── 02-seed-data.sql
+│       ├── 03-views.sql
+│       ├── 04-stored-procedures.sql
+│       └── 05-triggers.sql
+└── docker-compose.yml
+```
+
+## 🛠️ Tecnologías
+
+- **Backend:** Python 3.11, Django 4.2
+- **Base de Datos:** PostgreSQL 16
+- **Frontend:** Bootstrap 5, HTML5
+- **Containerización:** Docker Compose
+- **Seguridad:** bcrypt para contraseñas
+- **Patrón:** Repository + Service Layer
+
+## 📊 Datos de Prueba
+
+El sistema incluye:
+- 18 usuarios (2 admin, 6 médicos, 10 pacientes)
+- 10 especialidades médicas
+- 26 horarios configurados para médicos
+- 63 citas (histórico Octubre-Diciembre 2025)
+- 21 notificaciones generadas automáticamente
+
+## 🎯 Funcionalidades por Rol
+
+### 👨‍⚕️ Médico
+- Ver citas del día
+- Marcar citas como atendidas
+- Ver horarios configurados
+- Gestionar perfil
+
+### 👤 Paciente
+- Agendar nuevas citas
+- Ver próximas citas
+- Cancelar citas propias
+- Ver historial de citas
+- Recibir notificaciones
+
+### 👔 Administrador
+- Gestionar todos los usuarios
+- Agendar citas para cualquier paciente
+- Ver todas las citas del sistema
+- Acceder a reportes y estadísticas
+- Dashboard con 9 vistas SQL
+
+## 🔧 Comandos Útiles
+
+```bash
+# Ver logs
+sudo docker compose logs app -f
+
+# Acceder a PostgreSQL
+sudo docker compose exec db psql -U clinica_admin -d clinica_citas
+
+# Reiniciar base de datos
+sudo docker compose down -v
+sudo docker compose up -d
+```
+
+## 📝 Notas Técnicas
+
+### Validaciones Implementadas
+- Fecha de cita debe ser futura 
+- Horario debe estar en rango del médico (06:00-22:00)
+- No permite citas duplicadas (mismo médico, fecha, hora)
+- Paciente no puede tener dos citas a la misma hora
+- Solo se cancelan citas AGENDADAS
+
+### Reglas de Negocio
+- Médicos trabajan L-V con horarios configurables
+- Citas tienen estados: AGENDADA, ATENDIDA, CANCELADA, REPROGRAMADA
+- Notificaciones automáticas al agendar/cancelar
+- Historial completo de cambios de estado
+- Triggers automáticos para auditoría
+
+### Puertos
+- Aplicación: http://localhost:5000
+- PostgreSQL: localhost:5432 (interno), 5433 (externo)

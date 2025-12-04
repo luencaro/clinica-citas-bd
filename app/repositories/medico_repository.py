@@ -75,6 +75,10 @@ class MedicoRepository(BaseRepository[Medico]):
         result = db.execute_query(query, (id_usuario,), fetch='one')
         return Medico.from_db_row(result) if result else None
     
+    def find_by_usuario(self, id_usuario: int) -> Optional[Medico]:
+        """Alias de find_by_usuario_id para compatibilidad"""
+        return self.find_by_usuario_id(id_usuario)
+    
     def find_by_especialidad(self, id_especialidad: int, solo_activos: bool = True) -> List[Medico]:
         """Busca médicos por especialidad"""
         query = "SELECT * FROM medico WHERE id_especialidad = %s"

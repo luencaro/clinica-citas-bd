@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block title %}Horarios - Dr. {{ medico.nombre }} {{ medico.apellido }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'medicos_list' %}">Médicos</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'medico_detalle' medico.id_medico %}">Dr. {{ medico.nombre }} {{ medico.apellido }}</a></li>
+                    <li class="breadcrumb-item active">Horarios</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5><i class="bi bi-person-badge"></i> Información del Médico</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Nombre:</strong> Dr. {{ medico.nombre }} {{ medico.apellido }}</p>
+                    <p><strong>Especialidad:</strong> {{ medico.especialidad_nombre }}</p>
+                    <p><strong>Registro:</strong> {{ medico.registro_profesional }}</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-plus-circle"></i> Agregar Horario</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="dia_semana" class="form-label">Día de la Semana *</label>
+                            <select class="form-select" id="dia_semana" name="dia_semana" required>
+                                <option value="">Seleccionar día...</option>
+                                <option value="LUNES">Lunes</option>
+                                <option value="MARTES">Martes</option>
+                                <option value="MIERCOLES">Miércoles</option>
+                                <option value="JUEVES">Jueves</option>
+                                <option value="VIERNES">Viernes</option>
+                                <option value="SABADO">Sábado</option>
+                                <option value="DOMINGO">Domingo</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="hora_inicio" class="form-label">Hora Inicio *</label>
+                            <select class="form-select" id="hora_inicio" name="hora_inicio" required>
+                                <option value="">Seleccionar hora...</option>
+                                <option value="08:00">08:00</option>
+                                <option value="08:30">08:30</option>
+                                <option value="09:00">09:00</option>
+                                <option value="09:30">09:30</option>
+                                <option value="10:00">10:00</option>
+                                <option value="10:30">10:30</option>
+                                <option value="11:00">11:00</option>
+                                <option value="11:30">11:30</option>
+                                <option value="12:00">12:00</option>
+                                <option value="12:30">12:30</option>
+                                <option value="13:00">13:00</option>
+                                <option value="13:30">13:30</option>
+                                <option value="14:00">14:00</option>
+                                <option value="14:30">14:30</option>
+                                <option value="15:00">15:00</option>
+                                <option value="15:30">15:30</option>
+                                <option value="16:00">16:00</option>
+                                <option value="16:30">16:30</option>
+                                <option value="17:00">17:00</option>
+                                <option value="17:30">17:30</option>
+                                <option value="18:00">18:00</option>
+                            </select>
+                            <small class="text-muted">Intervalos de 30 minutos</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="hora_fin" class="form-label">Hora Fin *</label>
+                            <select class="form-select" id="hora_fin" name="hora_fin" required>
+                                <option value="">Seleccionar hora...</option>
+                                <option value="08:00">08:00</option>
+                                <option value="08:30">08:30</option>
+                                <option value="09:00">09:00</option>
+                                <option value="09:30">09:30</option>
+                                <option value="10:00">10:00</option>
+                                <option value="10:30">10:30</option>
+                                <option value="11:00">11:00</option>
+                                <option value="11:30">11:30</option>
+                                <option value="12:00">12:00</option>
+                                <option value="12:30">12:30</option>
+                                <option value="13:00">13:00</option>
+                                <option value="13:30">13:30</option>
+                                <option value="14:00">14:00</option>
+                                <option value="14:30">14:30</option>
+                                <option value="15:00">15:00</option>
+                                <option value="15:30">15:30</option>
+                                <option value="16:00">16:00</option>
+                                <option value="16:30">16:30</option>
+                                <option value="17:00">17:00</option>
+                                <option value="17:30">17:30</option>
+                                <option value="18:00">18:00</option>
+                            </select>
+                            <small class="text-muted">Intervalos de 30 minutos</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-check-circle"></i> Agregar Horario
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-calendar-week"></i> Horarios de Atención</h5>
+                </div>
+                <div class="card-body">
+                    {% if horarios %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Día</th>
+                                    <th>Hora Inicio</th>
+                                    <th>Hora Fin</th>
+                                    <th>Duración</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for horario in horarios %}
+                                <tr>
+                                    <td><strong>{{ horario.dia_nombre }}</strong></td>
+                                    <td>{{ horario.hora_inicio|slice:":5" }}</td>
+                                    <td>{{ horario.hora_fin|slice:":5" }}</td>
+                                    <td>
+                                        {% widthratio horario.hora_fin|slice:"0:2"|add:"0" 1 1 as hora_fin_int %}
+                                        {% widthratio horario.hora_inicio|slice:"0:2"|add:"0" 1 1 as hora_inicio_int %}
+                                        {% widthratio hora_fin_int 1 1 as hf %}
+                                        {% widthratio hora_inicio_int 1 1 as hi %}
+                                        {% widthratio hf|add:"0" 1 1 as total_fin %}
+                                        {% widthratio hi|add:"0" 1 1 as total_inicio %}
+                                        
+                                        {{ horario.hora_fin|slice:"3:5"|add:"0"|floatformat:0|add:horario.hora_fin|slice:"0:2"|add:"0"|floatformat:0|add:"-"|add:horario.hora_inicio|slice:"3:5"|add:"0"|floatformat:0|add:"-"|add:horario.hora_inicio|slice:"0:2"|add:"0"|floatformat:0 }}
+                                        
+                                        {% comment %}Simplified duration display{% endcomment %}
+                                        <span class="badge bg-info">
+                                            {% if horario.hora_inicio|slice:"0:2" == "08" and horario.hora_fin|slice:"0:2" == "12" %}4h
+                                            {% elif horario.hora_inicio|slice:"0:2" == "14" and horario.hora_fin|slice:"0:2" == "18" %}4h
+                                            {% elif horario.hora_inicio|slice:"0:2" == "08" and horario.hora_fin|slice:"0:2" == "18" %}10h
+                                            {% elif horario.hora_inicio|slice:"0:2" == "09" and horario.hora_fin|slice:"0:2" == "17" %}8h
+                                            {% else %}Variable{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <form method="post" action="{% url 'horario_eliminar' horario.id_horario %}" 
+                                              style="display: inline;" 
+                                              onsubmit="return confirm('¿Está seguro de eliminar este horario?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> No hay horarios registrados. Use el formulario para agregar horarios de atención.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <a href="{% url 'medico_detalle' medico.id_medico %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver al Perfil
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

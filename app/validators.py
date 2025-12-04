@@ -147,6 +147,34 @@ class PacienteValidator(Validator):
             raise EdadInvalidaError("Edad no realista")
         
         return True
+    
+    @staticmethod
+    def validar_creacion_paciente(
+        fecha_nacimiento: date,
+        direccion: str = None,
+        genero: str = None,
+        observaciones_medicas: str = None
+    ) -> bool:
+        """Valida datos para crear paciente (nota: genero y observaciones no están en la tabla actual)"""
+        PacienteValidator.validar_fecha_nacimiento(fecha_nacimiento)
+        
+        # Validar dirección si se proporciona
+        if direccion and len(direccion) > 200:
+            raise FormatoInvalidoError("La dirección no puede exceder 200 caracteres")
+        
+        # Validar género si se proporciona (aunque no se guarda en BD actualmente)
+        if genero:
+            generos_validos = ['M', 'F', 'OTRO']
+            if genero not in generos_validos:
+                raise ValorFueraDeRangoError(
+                    f"Género inválido: {genero}. Debe ser uno de {generos_validos}"
+                )
+        
+        # Validar observaciones si se proporcionan
+        if observaciones_medicas and len(observaciones_medicas) > 1000:
+            raise FormatoInvalidoError("Las observaciones no pueden exceder 1000 caracteres")
+        
+        return True
 
 
 class MedicoValidator(Validator):
@@ -167,6 +195,25 @@ class MedicoValidator(Validator):
             raise FormatoInvalidoError(
                 "El registro profesional no puede exceder 50 caracteres"
             )
+        
+        return True
+    
+    @staticmethod
+    def validar_creacion_medico(
+        id_especialidad: int,
+        registro_profesional: str,
+        descripcion: str = None
+    ) -> bool:
+        """Valida datos para crear médico (nota: descripcion no está en la tabla actual)"""
+        MedicoValidator.validar_registro_profesional(registro_profesional)
+        
+        # Validar especialidad
+        if not id_especialidad or id_especialidad <= 0:
+            raise CampoRequeridoError("La especialidad es requerida")
+        
+        # Validar descripción si se proporciona (aunque no se guarda en BD actualmente)
+        if descripcion and len(descripcion) > 500:
+            raise FormatoInvalidoError("La descripción no puede exceder 500 caracteres")
         
         return True
 
@@ -212,6 +259,13 @@ class HorarioValidator(Validator):
             )
         
         return True
+    
+    @staticmethod
+    def validar_horario(dia_semana: int, hora_inicio: time, hora_fin: time) -> bool:
+        """Valida un horario completo"""
+        HorarioValidator.validar_dia_semana(dia_semana)
+        HorarioValidator.validar_rango_horario(hora_inicio, hora_fin)
+        return True
 
 
 class CitaValidator(Validator):
@@ -255,15 +309,18 @@ class CitaValidator(Validator):
     @staticmethod
     def validar_motivo(motivo: str) -> bool:
         """Valida motivo de cita"""
-        if not motivo:
-            raise CampoRequeridoError("El motivo de la cita es requerido")
+        # El motivo es opcional, pero si se proporciona debe ser válido
+        if not motivo or not motivo.strip():
+            return True  # Permitir motivo vacío
         
-        if len(motivo) < 10:
+        motivo_limpio = motivo.strip()
+        
+        if len(motivo_limpio) < 3:
             raise FormatoInvalidoError(
-                "El motivo debe tener al menos 10 caracteres"
+                "El motivo debe tener al menos 3 caracteres"
             )
         
-        if len(motivo) > 500:
+        if len(motivo_limpio) > 500:
             raise FormatoInvalidoError(
                 "El motivo no puede exceder 500 caracteres"
             )

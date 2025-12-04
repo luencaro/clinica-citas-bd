@@ -8,10 +8,6 @@ psycopg2-binary==2.9.9
 # Seguridad
 bcrypt==4.1.2
 
-# Web Framework (Django)
-Django>=4.2,<5.0
-django-environ==0.11.2
-
 # Validación
 python-dotenv==1.0.0
 

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Notificaciones - Clínica{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-bell"></i> Notificaciones</h2>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    {% if notificaciones %}
+    <div class="list-group">
+        {% for notif in notificaciones %}
+        <div class="list-group-item {% if not notif.leida %}list-group-item-info{% endif %}">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">
+                    {% if notif.tipo == 'CONFIRMACION' %}
+                    <i class="bi bi-check-circle text-success"></i>
+                    {% elif notif.tipo == 'ALERTA' %}
+                    <i class="bi bi-exclamation-triangle text-warning"></i>
+                    {% elif notif.tipo == 'INFO' %}
+                    <i class="bi bi-info-circle text-primary"></i>
+                    {% else %}
+                    <i class="bi bi-bell"></i>
+                    {% endif %}
+                    {{ notif.tipo }}
+                </h5>
+                <small class="text-muted">{{ notif.fecha_creacion|date:"d/m/Y H:i" }}</small>
+            </div>
+            <p class="mb-1">{{ notif.mensaje }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        <i class="bi bi-info-circle"></i> No tienes notificaciones.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -40,6 +40,10 @@ class NotificacionRepository(BaseRepository[Notificacion]):
         result = db.execute_query(query, (id_notificacion,), fetch='one')
         return Notificacion.from_db_row(result) if result else None
     
+    def marcar_como_leida(self, id_notificacion: int) -> Optional[Notificacion]:
+        """Alias de marcar_leida para compatibilidad"""
+        return self.marcar_leida(id_notificacion)
+    
     def find_by_usuario(
         self,
         id_usuario: int,

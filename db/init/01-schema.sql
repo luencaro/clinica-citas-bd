@@ -79,7 +79,10 @@ CREATE TABLE IF NOT EXISTS horario_medico (
         ON DELETE CASCADE,
     
     CONSTRAINT chk_hora_valida 
-        CHECK (hora_inicio < hora_fin)
+        CHECK (hora_inicio < hora_fin),
+    
+    CONSTRAINT uq_horario_medico 
+        UNIQUE (id_medico, dia_semana, hora_inicio)
 );
 
 -- Tabla: CITA
